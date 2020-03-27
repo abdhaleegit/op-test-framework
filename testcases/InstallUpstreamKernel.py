@@ -20,6 +20,7 @@
 
 import unittest
 import os
+import time
 
 try:
     from urllib.parse import urlparse
@@ -74,7 +75,7 @@ class InstallUpstreamKernel(unittest.TestCase):
             if urlparse(path).scheme in valid_schemes:
                 return True
             return False
-
+        self.cv_SYSTEM.goto_state(OpSystemState.OFF)
         self.cv_SYSTEM.goto_state(OpSystemState.OS)
         self.console_thread.start()
         try:
@@ -134,8 +135,8 @@ class InstallUpstreamKernel(unittest.TestCase):
                 kern_rel_str = con.run_command(
                     "cat %s/include/config/kernel.release" % linux_path)[-1]
                 initrd_file = con.run_command(
-                    "ls -l /boot/initr*-%s*" % kern_rel_str)[-1].split(" ")[-1]
-                kexec_cmdline = "kexec --initrd %s --command-line=\"%s\" /boot/vmlinuz-%s -l" % (
+                    "ls -l /boot/initr*-%s.img" % kern_rel_str)[-1].split(" ")[-1]
+                kexec_cmdline = "kexec -l --initrd %s --command-line=\"%s\" /boot/vmlinuz-%s" % (
                     initrd_file, cmdline, kern_rel_str)
                 # Let's makesure we set the default boot index to current kernel
                 # to avoid leaving host in unstable state incase boot failure
@@ -144,8 +145,11 @@ class InstallUpstreamKernel(unittest.TestCase):
                 con.run_command(kexec_cmdline)
                 con.close()
                 raw_pty = self.cv_SYSTEM.console.get_console()
-                raw_pty.sendline("kexec -e")
+                log.debug("Geting into serial console")
+                time.sleep(30)
+                raw_pty.sendline('kexec -e')
                 raw_pty.expect("login:", timeout=600)
+                log.debug("At post boot login")
             con = self.cv_SYSTEM.cv_HOST.get_ssh_connection()
             res = con.run_command("uname -r")
             log.info("Installed upstream kernel version: %s", res[-1])
