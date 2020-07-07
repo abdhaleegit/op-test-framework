@@ -91,7 +91,7 @@ class InstallUpstreamKernel(unittest.TestCase):
             con.run_command("[ -d %s ] || mkdir -p %s" %
                             (self.home, self.home))
             con.run_command("if [ -d %s ];then rm -rf %s;fi" %
-                            (linux_path, linux_path))
+                            (linux_path, linux_path), timeout=300)
             con.run_command("cd %s && git clone --depth 1  %s -b %s linux" %
                             (self.home, self.repo, self.branch), timeout=self.host_cmd_timeout)
             con.run_command("cd %s" % linux_path)
@@ -112,7 +112,7 @@ class InstallUpstreamKernel(unittest.TestCase):
                 else:
                     self.cv_HOST.copy_test_file_to_host(
                         self.config_path, dstdir=os.path.join(linux_path, ".config"))
-            con.run_command("make %s" % self.config)
+            con.run_command("yes "" | make %s" % self.config)
             log.debug("Compile and install linux kernel")
             con.run_command("make -j %d -s && make modules && make modules_install && make install" %
                             onlinecpus, timeout=self.host_cmd_timeout)
@@ -145,8 +145,6 @@ class InstallUpstreamKernel(unittest.TestCase):
                 con.run_command(kexec_cmdline)
                 con.close()
                 raw_pty = self.cv_SYSTEM.console.get_console()
-                log.debug("Geting into serial console")
-                time.sleep(30)
                 raw_pty.sendline('kexec -e')
                 raw_pty.expect("login:", timeout=600)
                 log.debug("At post boot login")

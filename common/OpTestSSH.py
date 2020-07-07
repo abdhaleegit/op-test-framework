@@ -221,7 +221,7 @@ class OpTestSSH():
 
         return self.pty
 
-    def run_command(self, command, timeout=60, retry=0):
+    def run_command(self, command, timeout=120, retry=0):
         return self.util.run_command(self, command, timeout, retry)
 
     def run_command_ignore_fail(self, command, timeout=60, retry=0):

@@ -171,7 +171,7 @@ class OpTestSystem(object):
         self.ipl_watermark = 100
         self.ipl_timeout = 4  # needs consideration with petitboot timeout
         self.booting_watermark = 100
-        self.booting_timeout = 5
+        self.booting_timeout = 15
         self.kill_cord = 102  # just a ceiling on giving up
 
         # We have a state machine for going in between states of the system

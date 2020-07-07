@@ -37,9 +37,9 @@ from .OpTestConstants import OpTestConstants as BMC_CONST
 
 log = OpTestLogger.optest_logger_glob.get_logger(__name__)
 
-WAITTIME = 15
+WAITTIME = 30
 BOOTTIME = 500
-STALLTIME = 3
+STALLTIME = 15
 
 
 class OpHmcState():
