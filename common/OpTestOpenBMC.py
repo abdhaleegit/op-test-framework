@@ -1028,18 +1028,20 @@ class HostManagement():
 
 class OpTestOpenBMC():
     def __init__(self, ip=None, username=None, password=None, ipmi=None,
-                 rest_api=None, logfile=sys.stdout,
+                 rest_api=None, hmc=None, logfile=sys.stdout,
                  check_ssh_keys=False, known_hosts_file=None):
         self.hostname = ip
         self.username = username
         self.password = password
         self.ipmi = ipmi
+        self.hmc = hmc
         self.rest_api = rest_api
         self.has_vpnor = None
         self.logfile = logfile
-        self.console = OpTestSSH(ip, username, password, port=2200,
-                                 logfile=self.logfile, check_ssh_keys=check_ssh_keys,
-                                 known_hosts_file=known_hosts_file)
+        if not self.hmc:
+            self.console = OpTestSSH(ip, username, password, port=2200,
+                                     logfile=self.logfile, check_ssh_keys=check_ssh_keys,
+                                     known_hosts_file=known_hosts_file)
         self.bmc = OpTestBMC(ip=self.hostname,
                              username=self.username,
                              password=self.password,
@@ -1131,8 +1133,14 @@ class OpTestOpenBMC():
     def get_ipmi(self):
         return self.ipmi
 
+    def get_hmc(self):
+        return self.hmc
+
     def get_host_console(self):
-        return self.console
+        if self.hmc:
+            return self.hmc.get_host_console()
+        else:
+            return self.console
 
     def get_rest_api(self):
         return self.rest_api
