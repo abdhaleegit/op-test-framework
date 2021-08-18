@@ -1271,7 +1271,7 @@ class OpTestUtil():
         my_user = host.username()
         my_pwd = host.password()
         pty.sendline()
-        rc = pty.expect(['login: ', pexpect.TIMEOUT, pexpect.EOF], timeout=10)
+        rc = pty.expect(['login: ', pexpect.TIMEOUT, pexpect.EOF], timeout=60)
         if rc == 0:
             pty.sendline(my_user)
             time.sleep(0.1)
@@ -1454,7 +1454,7 @@ class OpTestUtil():
             return
 
         rc = pty.expect(['login: $', ".*#$", ".*# $", ".*\$", "~>", "~ #",
-                         'Petitboot', pexpect.TIMEOUT, pexpect.EOF], timeout=10)
+                         'Petitboot', pexpect.TIMEOUT, pexpect.EOF], timeout=100)
         if rc == 0:
             track_obj.PS1_set, track_obj.LOGIN_set = self.get_login(
                 system_obj.cv_HOST, term_obj, pty, self.build_prompt(system_obj.prompt))
@@ -1603,7 +1603,7 @@ class OpTestUtil():
                 raise CommandFailed(command, ''.join(failure_list_output), -1)
         return list_output, echo_rc
 
-    def run_command(self, term_obj, command, timeout=60, retry=0):
+    def run_command(self, term_obj, command, timeout=120, retry=0):
         # retry=0 will perform one pass
         counter = 0
         while counter <= retry:
