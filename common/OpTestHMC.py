@@ -286,7 +286,7 @@ class HMCUtil():
         self.ssh.run_command(
             'migrlpar -o v -m %s -t %s -p %s' % (src_mg_system, dest_mg_system, self.lpar_name))
         self.ssh.run_command(
-            'migrlpar -o m -m %s -t %s -p %s' % (src_mg_system, dest_mg_system, self.lpar_name), timeout=180)
+            'migrlpar -o m -m %s -t %s -p %s' % (src_mg_system, dest_mg_system, self.lpar_name), timeout=300)
         if self.is_lpar_in_managed_system(dest_mg_system):
             log.info("Migration of lpar %s from %s to %s is successfull" % 
                      (self.lpar_name, src_mg_system, dest_mg_system))
