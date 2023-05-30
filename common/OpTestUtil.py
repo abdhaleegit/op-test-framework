@@ -1480,7 +1480,7 @@ class OpTestUtil():
             pty.sendline(my_user)
             time.sleep(0.1)
             rc = pty.expect(
-                [r"[Pp]assword:", pexpect.TIMEOUT, pexpect.EOF], timeout=10)
+                [r"[Pp]assword:", pexpect.TIMEOUT, pexpect.EOF], timeout=30)
             if rc == 0:
                 pty.sendline(my_pwd)
                 time.sleep(0.5)
@@ -1509,17 +1509,17 @@ class OpTestUtil():
         else:  # timeout eof
             pty.sendline()
             rc = pty.expect(
-                ['login: ', pexpect.TIMEOUT, pexpect.EOF], timeout=10)
+                ['login: ', pexpect.TIMEOUT, pexpect.EOF], timeout=60)
             if rc == 0:
                 pty.sendline(my_user)
                 time.sleep(0.1)
                 rc = pty.expect(
-                    [r"[Pp]assword:", pexpect.TIMEOUT, pexpect.EOF], timeout=10)
+                    [r"[Pp]assword:", pexpect.TIMEOUT, pexpect.EOF], timeout=30)
                 if rc == 0:
                     pty.sendline(my_pwd)
                     time.sleep(0.5)
                     rc = pty.expect(['login: $', ".*#$", ".*# $", ".*\$", "~ #",
-                                     'Petitboot', pexpect.TIMEOUT, pexpect.EOF], timeout=10)
+                                     'Petitboot', pexpect.TIMEOUT, pexpect.EOF], timeout=100)
                     if rc not in [1, 2, 3, 4]:
                         if term_obj.setup_term_quiet == 0:
                             log.warning("OpTestSystem Problem with the login and/or password prompt,"
@@ -1612,7 +1612,7 @@ class OpTestUtil():
         my_pwd = host.password()
         pty.sendline("which sudo && sudo -s")
         rc = pty.expect(
-            [r"[Pp]assword for", pexpect.TIMEOUT, pexpect.EOF], timeout=5)
+            [r"[Pp]assword for", pexpect.TIMEOUT, pexpect.EOF], timeout=15)
         # we must not add # prompt to the expect, we get false hit when complicated user login prompt and control chars,
         # we need to cleanly ignore everything but password and then we blindly next do PS1 setup, ignoring who knows what
         if rc == 0:
